@@ -1,0 +1,16 @@
+langchain
+langchain-core
+langchain-community
+langchain-groq
+langgraph
+groq
+
+ddgs
+requests
+beautifulsoup4
+
+python-dotenv
+pydantic
+
+streamlit
+rich
