@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-@tool
+@tool  # decorator
 def web_search(query: str) -> str:
     """
     Search the web using DuckDuckGo and return relevant

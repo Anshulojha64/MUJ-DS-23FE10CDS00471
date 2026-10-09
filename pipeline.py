@@ -1,9 +1,4 @@
-from agents import (
-    build_search_agent,
-    build_reader_agent,
-    writer_chain,
-    critic_chain
-)
+from agents import build_search_agent, build_reader_agent, writer_chain, critic_chain
 
 
 def extract_agent_text(result):
@@ -31,9 +26,7 @@ def run_research_pipeline(topic: str) -> dict:
 
     state = {}
 
-    # ========================================================
     # STEP 1 - SEARCH AGENT
-    # ========================================================
 
     print("\n" + "=" * 60)
     print("STEP 1 - SEARCH AGENT")
@@ -41,33 +34,30 @@ def run_research_pipeline(topic: str) -> dict:
 
     search_agent = build_search_agent()
 
-    search_result = search_agent.invoke({
-        "messages": [
-            (
-                "user",
-                f"""
+    search_result = search_agent.invoke(
+        {
+            "messages": [
+                (
+                    "user",
+                    f"""
 Find recent, reliable and detailed information
 about the following research topic:
 
 {topic}
 
 Use the web_search tool.
-"""
-            )
-        ]
-    })
-
-    state["search_results"] = extract_agent_text(
-        search_result
+""",
+                )
+            ]
+        }
     )
+
+    state["search_results"] = extract_agent_text(search_result)
 
     print("\nSearch Results:\n")
     print(state["search_results"])
 
-
-    # ========================================================
     # STEP 2 - READER AGENT
-    # ========================================================
 
     print("\n" + "=" * 60)
     print("STEP 2 - READER AGENT")
@@ -75,11 +65,12 @@ Use the web_search tool.
 
     reader_agent = build_reader_agent()
 
-    reader_result = reader_agent.invoke({
-        "messages": [
-            (
-                "user",
-                f"""
+    reader_result = reader_agent.invoke(
+        {
+            "messages": [
+                (
+                    "user",
+                    f"""
 Research topic:
 {topic}
 
@@ -93,29 +84,24 @@ web pages.
 
 Extract detailed and relevant information that can
 be used to write the final research report.
-"""
-            )
-        ]
-    })
-
-    state["scraped_content"] = extract_agent_text(
-        reader_result
+""",
+                )
+            ]
+        }
     )
+
+    state["scraped_content"] = extract_agent_text(reader_result)
 
     print("\nScraped Content:\n")
     print(state["scraped_content"])
 
-
-    # ========================================================
     # STEP 3 - WRITER CHAIN
-    # ========================================================
 
     print("\n" + "=" * 60)
     print("STEP 3 - WRITER CHAIN")
     print("=" * 60)
 
-    research_combined = (
-        f"""
+    research_combined = f"""
 SEARCH RESULTS:
 
 {state["search_results"]}
@@ -125,44 +111,33 @@ SCRAPED CONTENT:
 
 {state["scraped_content"]}
 """
-    )
 
-    state["report"] = writer_chain.invoke({
-        "topic": topic,
-        "research": research_combined
-    })
+    state["report"] = writer_chain.invoke(
+        {"topic": topic, "research": research_combined}
+    )
 
     print("\nFinal Research Report:\n")
     print(state["report"])
 
-
-    # ========================================================
     # STEP 4 - CRITIC CHAIN
-    # ========================================================
 
     print("\n" + "=" * 60)
     print("STEP 4 - CRITIC CHAIN")
     print("=" * 60)
 
-    state["feedback"] = critic_chain.invoke({
-        "report": state["report"]
-    })
+    state["feedback"] = critic_chain.invoke({"report": state["report"]})
 
     print("\nCritic Feedback:\n")
     print(state["feedback"])
 
-
     return state
 
 
-# ============================================================
 # MAIN
-# ============================================================
+
 
 if __name__ == "__main__":
 
-    topic = input(
-        "\nEnter a research topic: "
-    )
+    topic = input("\nEnter a research topic: ")
 
     result = run_research_pipeline(topic)

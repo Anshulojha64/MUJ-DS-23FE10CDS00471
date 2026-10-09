@@ -6,25 +6,18 @@ from tools import web_search, scrape_url
 from dotenv import load_dotenv
 import os
 
-# ============================================================
-# LOAD ENVIRONMENT VARIABLES
-# ============================================================
-
 load_dotenv()
 
 
-# ============================================================
 # GROQ MODEL
-# ============================================================
+
 
 llm = ChatGroq(
     model="openai/gpt-oss-20b", temperature=0, api_key=os.getenv("GROQ_API_KEY")
 )
 
 
-# ============================================================
 # SEARCH AGENT
-# ============================================================
 
 
 def build_search_agent():
@@ -47,9 +40,7 @@ Instructions:
     )
 
 
-# ============================================================
 # READER AGENT
-# ============================================================
 
 
 def build_reader_agent():
@@ -76,9 +67,8 @@ Instructions:
     )
 
 
-# ============================================================
 # NLP ANALYSIS CHAIN
-# ============================================================
+
 
 nlp_prompt = ChatPromptTemplate.from_messages(
     [
@@ -153,9 +143,8 @@ Research Text:
 nlp_chain = nlp_prompt | llm | StrOutputParser()
 
 
-# ============================================================
 # WRITER CHAIN - LCEL
-# ============================================================
+
 
 writer_prompt = ChatPromptTemplate.from_messages(
     [
@@ -234,9 +223,8 @@ Requirements:
 writer_chain = writer_prompt | llm | StrOutputParser()
 
 
-# ============================================================
 # CRITIC CHAIN - LCEL
-# ============================================================
+
 
 critic_prompt = ChatPromptTemplate.from_messages(
     [
